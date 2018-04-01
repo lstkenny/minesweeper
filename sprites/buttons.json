@@ -1,0 +1,17 @@
+{
+	"name": "buttons",
+	"url": "img/mines.png",
+	"pos": {
+		"x": 0,
+		"y": 23,
+		"w": 26,
+		"h": 26
+	},
+	"tiles": {
+		"happy":	[0, 0],
+		"pressed":	[1, 0],
+		"scared":	[2, 0],
+		"win": 		[3, 0],
+		"dead":		[4, 0]
+	}
+}
