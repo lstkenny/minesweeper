@@ -336,25 +336,8 @@ class Game
 		};
 	}
 
-	click(pos)
+	click(pos, button)
 	{
-		pos = this.getGridCoord(pos);
-
-		let val = 0;
-
-		//reveal neighbors
-		if (this.active[2] != false)
-		{
-			if (pos.x == this.active[2].x && pos.y == this.active[2].y)
-			{
-				val = this.grid.revealNeighbors(pos.x, pos.y);
-			}
-		}
-		else
-		{
-			val = this.grid.reveal(pos.x, pos.y);
-		}
-
 		//explode
 		if (val == 'mine')
 		{
@@ -362,19 +345,40 @@ class Game
 		}
 	}
 
-	rightClick(pos)
-	{
-		pos = this.getGridCoord(pos);
-		this.grid.mark(pos.x, pos.y);
-	}
-
 	pressed(pos, button)
 	{
-		this.active[button] = this.getGridCoord(pos);
+		if (this.gameOver)
+		{
+			return false;
+		}
+		pos = this.getGridCoord(pos);
+		this.active[button] = pos;
+
+		//reveal neighbors
+		if (this.active[2] != false && this.active[0] != false)
+		{
+			if (pos.x == this.active[2].x && pos.y == this.active[2].y)
+			{
+				this.grid.revealNeighbors(pos.x, pos.y);
+			}
+		}
+		else if (button == 2)
+		{
+			this.grid.mark(pos.x, pos.y);
+		}
 	}
 
 	released(pos, button)
 	{
+		if (this.gameOver)
+		{
+			return false;
+		}
+		pos = this.getGridCoord(pos);
+		if (button == 0)
+		{
+			this.grid.reveal(pos.x, pos.y);
+		}
 		this.active[button] = false;
 	}
 
@@ -423,16 +427,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		canvas.addEventListener('mousedown', function(event) {
 			game.pressed(getClickPos(canvas, event), event.button);
-		});		
+			game.draw(context, sprite);
+		}, false);		
 
 		canvas.addEventListener('mouseup', function(event) {
 			game.released(getClickPos(canvas, event), event.button);
-		});
-
+			game.draw(context, sprite);
+		}, false);
+/*
 		//Binding the click event on the canvas
 		canvas.addEventListener('click', function(event) {
 
-			game.click(getClickPos(canvas, event));
+			game.click(getClickPos(canvas, event), event.button);
 
 			game.draw(context, sprite);
 
@@ -443,10 +449,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
 			event.preventDefault();
 
-			game.rightClick(getClickPos(canvas, event));
+			game.click(getClickPos(canvas, event), event.button);
 
 			game.draw(context, sprite);
 
+			return false;
+		}, false);
+*/
+		//Binding the right click on the canvas
+		canvas.addEventListener('contextmenu', function(event) {
+			event.preventDefault();
 			return false;
 		}, false);
 /*
